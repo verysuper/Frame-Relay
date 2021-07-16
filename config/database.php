@@ -63,6 +63,23 @@ return [
             ]) : [],
         ],
 
+        '2BizBox' => [
+            'driver' => env('DB_CONNECTION_ERP'),
+            'host' => env('DB_HOST_ERP'),
+            'port' => env('DB_PORT_ERP'),
+            'database' => env('DB_DATABASE_ERP'),
+            'username' => env('DB_USERNAME_ERP'),
+            'password' => env('DB_PASSWORD_ERP'),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
@@ -79,13 +96,13 @@ return [
         ],
 
         'sqlsrv' => [
-            'driver' => 'sqlsrv',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'driver' => env('DB_CONNECTION_T357'),
+//            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST_T357'),
+            'port' => env('DB_PORT_T357'),
+            'database' => env('DB_DATABASE_T357'),
+            'username' => env('DB_USERNAME_T357'),
+            'password' => env('DB_PASSWORD_T357'),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
