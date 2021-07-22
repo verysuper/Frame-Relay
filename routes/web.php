@@ -42,3 +42,6 @@ Route::get('/test-connect-t357', function () {
         )->fetchAll(\PDO::FETCH_ASSOC) ?? [];
     dd($all_list);
 });
+
+Route::get('test0/logRo1','App\Http\Controllers\ERP\LogRo1Controller@index'); // get log ro
+Route::post('test0/logRo1','App\Http\Controllers\ERP\LogRo1Controller@search'); // get log ro
