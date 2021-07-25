@@ -26,11 +26,7 @@
     <body>
         <nav>
             <ul>
-                <li><a href="/test0/news">入庫出庫紀錄(測試用)</a></li>
-                <li><a href="/test0/report1">採購單紀錄</a></li>
-                <li><a href="/test0/wo1">工單調度</a></li>
-                <li><a href="/test0/ro1">收料單+發票</a></li>
-                <li><a href="/test0/po1">採購單紀錄(新)</a></li>
+                <li><a href="/test0/logTotalRo">採購單→收料單 統計(NTD)</a></li>
             </ul>
         </nav>
         <main>

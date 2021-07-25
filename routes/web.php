@@ -43,5 +43,6 @@ Route::get('/test-connect-t357', function () {
     dd($all_list);
 });
 
-Route::get('test0/logRo1','App\Http\Controllers\ERP\LogRo1Controller@index'); // get log ro
-Route::post('test0/logRo1','App\Http\Controllers\ERP\LogRo1Controller@search'); // get log ro
+Route::get('test0/logTotalRo','App\Http\Controllers\ERP\LogTotalRoController@index');
+Route::post('test0/logTotalRo','App\Http\Controllers\ERP\LogTotalRoController@search');
+Route::post('logTotalRoExport','App\Http\Controllers\ERP\LogTotalRoController@export');
