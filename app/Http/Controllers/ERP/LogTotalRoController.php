@@ -7,6 +7,8 @@ use DateInterval;
 use DatePeriod;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use App\Excel\Exports\ERP\LogTotalRoExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LogTotalRoController extends Controller
 {
@@ -54,6 +56,7 @@ class LogTotalRoController extends Controller
     {
         $pdo_erp = DB::connection('2BizBox')->getPdo();
         try {
+            // todo copy temp table
             $ro_sql_str =
                 "CREATE TABLE IF NOT EXISTS `erp_log_ro_inventory` ( " .
                 "`ii` bigint(191) NOT NULL, " .
@@ -267,8 +270,14 @@ class LogTotalRoController extends Controller
         ]);
     }
 
-    public function export()
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        var_dump('logTotalRoExport');
+        $pdo_erp = DB::connection('2BizBox')->getPdo();
+        $ipArr = explode(".", $this->getIp());
+        $tableName = "erp_log_ro_detail_{$ipArr[2]}_{$ipArr[3]}";
+        $ro_sql_str =
+            "SELECT * FROM {$tableName}";
+        $all_list = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_ASSOC) ?? [];
+        return Excel::download(new LogTotalRoExport($all_list), '採購單→收料單(統計NTD).xlsx');
     }
 }

@@ -26,7 +26,7 @@
     <body>
         <nav>
             <ul>
-                <li><a href="/test0/logTotalRo">採購單→收料單 統計(NTD)</a></li>
+                <li><a href="/test0/logTotalRo">採購單→收料單(統計NTD)</a></li>
             </ul>
         </nav>
         <main>
