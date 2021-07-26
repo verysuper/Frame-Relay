@@ -25,9 +25,17 @@
     </head>
     <body>
         <nav>
+            <hr>
             <ul>
-                <li><a href="/test0/logTotalRo">採購單→收料單(統計NTD)</a></li>
+                <li><a href="/test0/wo1">工單調度</a></li>
+                <li><a href="/test0/ro1">收料單+發票</a></li>
+                <li><a href="/test0/po1">採購單紀錄(新)</a></li>
             </ul>
+            <hr>
+            <ul>
+                <li><a href="/test0/logTotalRo">採購單→收料單(NTD)</a></li>
+            </ul>
+            <hr>
         </nav>
         <main>
             @yield('content')

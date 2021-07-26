@@ -33,6 +33,21 @@ Route::get('/test-connect-t357', function () {
     dd($all_list);
 });
 
-Route::get('test0/logTotalRo','App\Http\Controllers\ERP\LogTotalRoController@index');
-Route::post('test0/logTotalRo','App\Http\Controllers\ERP\LogTotalRoController@search');
-Route::post('test0/logTotalRoExport','App\Http\Controllers\ERP\LogTotalRoController@export');
+Route::group(['prefix' => 'test0', 'namespace' => 'App\Http\Controllers\ERP'], function () {
+//採購單→收料單(NTD) 可能需權限
+    Route::get('logTotalRo','LogTotalRoController@index');
+    Route::post('logTotalRo','LogTotalRoController@search');
+    Route::post('logTotalRoExport','LogTotalRoController@export');
+//採購單
+    Route::get('po1','Po1Controller@index');
+    Route::post('po1','Po1Controller@search');
+    Route::post('po1export', 'Po1Controller@export');
+//收料單
+    Route::get('ro1','Ro1Controller@index');
+    Route::post('ro1','Ro1Controller@search');
+    Route::post('ro1export', 'Ro1Controller@export');
+//工單調度報表
+    Route::get('wo1','Wo1Controller@index');
+    Route::post('wo1','Wo1Controller@search');
+    Route::post('wo1export', 'Wo1Controller@export');
+});

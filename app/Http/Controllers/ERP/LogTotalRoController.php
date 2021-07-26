@@ -278,6 +278,6 @@ class LogTotalRoController extends Controller
         $ro_sql_str =
             "SELECT * FROM {$tableName}";
         $all_list = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_ASSOC) ?? [];
-        return Excel::download(new LogTotalRoExport($all_list), '採購單→收料單(統計NTD).xlsx');
+        return Excel::download(new LogTotalRoExport($all_list), '採購單→收料單(NTD).xlsx');
     }
 }

@@ -1,7 +1,7 @@
-@extends('ERP\test0')
+@extends('ERP.test0')
 @section('content')
     <div style="margin: 20px">
-        <div>log</div>
+        <div>採購單→收料單(NTD)</div>
         <form action="/test0/logTotalRo" method="post">
             {{ csrf_field() }}
             <label for="start">
@@ -13,6 +13,12 @@
                        onchange="document.getElementById('export_end').value = this.value;">
             </label>
             <button type="submit">預覽</button>
+            @if (!is_null($ro_total) && count((array)$ro_total))
+                <a href=""
+                   onclick="event.preventDefault(); document.getElementById('export-form').submit();">
+                    {{ __('明細') }}
+                </a>
+            @endif
         </form>
         <form id="export-form" action="/test0/logTotalRoExport" method="POST" style="display: none;">
             @csrf
@@ -20,12 +26,8 @@
             <input type="hidden" id="export_end" name="end" value={{ $end }}>
         </form>
     </div>
-    <div>
+    <div style="margin: 20px">
         @if (!is_null($ro_total) && count((array)$ro_total))
-            <a href=""
-               onclick="event.preventDefault(); document.getElementById('export-form').submit();">
-                {{ __('明細') }}
-            </a>
             <table style="border:1px #cccccc solid; width: 100%;" border='1'>
                 <thead>
                 <tr>
@@ -51,8 +53,9 @@
                             </td>
                         @endforeach
                         <td>
-                            <div>{{ round(isset($ro_total->{$key}) ? $ro_total->{$key}->net :'', 3) }}</div>
-                            <div>{{ round(isset($ro_total->{$key}) ? $ro_total->{$key}->tax :'', 3) }}</div>
+                            <div>
+                                {{ round(isset($ro_total->{$key}) ? $ro_total->{$key}->net :'', 3) + round(isset($ro_total->{$key}) ? $ro_total->{$key}->tax :'', 3) }}
+                            </div>
                         </td>
                     </tr>
                 @endforeach
