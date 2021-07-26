@@ -11,38 +11,23 @@ class Po1Controller extends Controller
 {
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        $input = \request()->all();
-        $all_list = $this->queryToArray($input);
+        $all_list = $this->queryToArray();
         return Excel::download(new Po1Export($all_list), '採購單.xlsx');
-    }
-
-    public function index()
-    {
-        return view('ERP.po_form1', [
-            'list' => [],
-            'start' => '2020-01-01',
-            'end' => '',
-            'status' => 'OPEN',
-            'vendor' => '',
-            'partNumber' => '',
-        ]);
     }
 
     public function search()
     {
         $input = \request()->all();
-        $all_list = $this->queryToArray($input);
-        return view('ERP.po_form1', [
-            'list' => $all_list,
-            'start' => $input['start'],
-            'end' => $input['end'],
-            'status' => $input['status'],
-            'vendor' => $input['vendor'],
-            'partNumber' => $input['partNumber'],
-        ]);
+        if (count($input) > 0) {
+            $all_list = $this->queryToArray();
+            return redirect()->route( 'erp.po1' )->with([
+                'list' => $all_list,
+            ])->withInput();
+        }
+        return view('ERP.po_form1');
     }
 
-    public function queryToArray($input)
+    public function queryToArray(): array
     {
         $input = \request()->all();
         $pdo = DB::connection('2BizBox')->getPdo();

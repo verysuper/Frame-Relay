@@ -5,28 +5,30 @@
         <form action="/test0/wo1" method="post">
             {{ csrf_field() }}
             <label for="start">
-                <input id="start" name="start" type="date" value="{{ $start }}" required
+                <input id="start" name="start" type="date" value="{{ old('start') }}" required
                        onchange="document.getElementById('export_start').value = this.value;">
             </label>
             <label for="end">
-                <input id="end" name="end" type="date" value="{{ $end }}" required
+                <input id="end" name="end" type="date" value="{{ old('end') }}" required
                        onchange="document.getElementById('export_end').value = this.value;">
             </label>
             <button type="submit">預覽</button>
-            <a href=""
-               onclick="event.preventDefault(); document.getElementById('export-form').submit();">
-                {{ __('匯出') }}
-            </a>
+            @if (count(session()->get('list')??[]) > 0)
+                <a href=""
+                   onclick="event.preventDefault(); document.getElementById('export-form').submit();">
+                    {{ __('匯出') }}
+                </a>
+            @endif
         </form>
         <form id="export-form" action="/test0/wo1export" method="POST" style="display: none;">
             @csrf
-            <input type="hidden" id="export_start" name="start" value={{ $start }}>
-            <input type="hidden" id="export_end" name="end" value={{ $end }}>
+            <input type="hidden" id="export_start" name="start" value="{{ old('start') }}">
+            <input type="hidden" id="export_end" name="end" value="{{ old('end') }}">
         </form>
     </div>
     <div style="margin: 20px">
-        @if (count($list) > 0)
-            <div>共{{ count($list) }}筆</div>
+        @if (count(session()->get('list')??[]) > 0)
+            <div>共{{ count(session()->get('list')??[]) }}筆</div>
             <table style="width: 100%;" border='1'>
                 <thead>
                 <tr>
@@ -49,20 +51,20 @@
                     {{--                <td>buyerCode</td>--}}
                     <td>status</td>{{--status--}}
                     <td>makeBuy</td>{{--makeBuy--}}
-{{--                    <td>inSit</td>--}}{{--inSit--}}
+                    {{--                    <td>inSit</td>--}}{{--inSit--}}
                     <td>首選供應商</td>{{--preferredPo--}}
                     <td>採購單</td>{{--採購單--}}
                     <td>採購單項</td>{{--採購單項--}}
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($list as $key => $value)
+                @foreach(session()->get('list')??[] as $key => $value)
                     <tr
                         @if (intval($value['lv']) === 1)
-                            style="background:rgba(255,140,0,0.5)" ;
+                        style="background:rgba(255,140,0,0.5)" ;
                         @endif
                         @if (intval($value['lv']) === 0)
-                            style="background:rgba(0,136,255,0.5)" ;
+                        style="background:rgba(0,136,255,0.5)" ;
                         @endif
                     >
                         <td>{{ $value['orderNumber'] }}</td>
@@ -78,7 +80,7 @@
                         <td>{{ floatval($value['調整數']) }}</td>{{--調整數--}}
                         <td
                             @if (intval($value['短缺預測']) < 0)
-                                style="color:red";
+                            style="color:red";
                             @endif
                         >{{ floatval($value['短缺預測']) }}</td>{{--短缺預測--}}
                         <td>{{ $value['vendorID'] }}</td>
@@ -88,7 +90,7 @@
                         {{--                    <td>{{ $value['buyerCode'] }}</td>--}}
                         <td>{{ $value['status'] }}</td>
                         <td>{{ $value['makeBuy'] }}</td>
-{{--                        <td>{{ $value['inSit'] }}</td>--}}
+                        {{--                        <td>{{ $value['inSit'] }}</td>--}}
                         <td>{{ $value['preferredPo'] }}</td>
                         <td>{{ $value['採購單'] }}</td>
                         <td>{{ $value['採購單項'] }}</td>

@@ -1,3 +1,7 @@
+@php
+    $ro_total = session()->get('ro_total') ?? null;
+    $columns = session()->get('columns') ?? null;
+@endphp
 @extends('ERP.test0')
 @section('content')
     <div style="margin: 20px">
@@ -5,11 +9,11 @@
         <form action="/test0/logTotalRo" method="post">
             {{ csrf_field() }}
             <label for="start">
-                <input id="start" name="start" type="date" value="{{ $start }}" required
+                <input id="start" name="start" type="date" value="{{ old('start') }}" required
                        onchange="document.getElementById('export_start').value = this.value;">
             </label>
             <label for="end">
-                <input id="end" name="end" type="date" value="{{ $end }}" required
+                <input id="end" name="end" type="date" value="{{ old('end') }}" required
                        onchange="document.getElementById('export_end').value = this.value;">
             </label>
             <button type="submit">預覽</button>
@@ -22,8 +26,8 @@
         </form>
         <form id="export-form" action="/test0/logTotalRoExport" method="POST" style="display: none;">
             @csrf
-            <input type="hidden" id="export_start" name="start" value={{ $start }}>
-            <input type="hidden" id="export_end" name="end" value={{ $end }}>
+            <input type="hidden" id="export_start" name="start" value={{ old('start') }}>
+            <input type="hidden" id="export_end" name="end" value={{ old('end') }}>
         </form>
     </div>
     <div style="margin: 20px">

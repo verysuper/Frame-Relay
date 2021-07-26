@@ -28,7 +28,7 @@
             <hr>
             <ul>
                 <li><a href="/test0/wo1">工單調度</a></li>
-                <li><a href="/test0/ro1">收料單+發票</a></li>
+                <li><a href="/test0/ro1">收料單+發票(有bug)</a></li>
                 <li><a href="/test0/po1">採購單紀錄(新)</a></li>
             </ul>
             <hr>

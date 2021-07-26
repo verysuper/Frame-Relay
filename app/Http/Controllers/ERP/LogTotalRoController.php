@@ -41,17 +41,6 @@ class LogTotalRoController extends Controller
         'W',
     ];
 
-    public function index()
-    {
-        return view('ERP.logTotalRo', [
-            'ro_total' => [],
-            'ro_off_list' => [],
-            'start' => date('Y-m-d'),
-            'end' => date('Y-m-d'),
-            'interval' => '',
-        ]);
-    }
-
     public function turn_yesterday_log(): void
     {
         $pdo_erp = DB::connection('2BizBox')->getPdo();
@@ -160,6 +149,9 @@ class LogTotalRoController extends Controller
     public function search()
     {
         $input = \request()->all();
+        if (!count($input) > 0) {
+            return view('ERP.logTotalRo');
+        }
         $this->turn_yesterday_log();
         $pdo_erp = DB::connection('2BizBox')->getPdo();
         $ipArr = explode(".", $this->getIp());
@@ -211,11 +203,9 @@ class LogTotalRoController extends Controller
             "ORDER BY erp_log_ro_inventory.LDATE DESC ";
         $ro_list = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_ASSOC) ?? [];
         if (!count($ro_list) > 0) {
-            return view('ERP.logTotalRo', [
+            return redirect()->route( 'erp.logTotalRo' )->with([
                 'ro_total' => $ro_list,
-                'start' => $input['start'],
-                'end' => $input['end'],
-            ]);
+            ])->withInput();
         }
         $log_sql_arr = null;
         $ro_total_arr = null;
@@ -262,12 +252,10 @@ class LogTotalRoController extends Controller
         foreach ($period as $dt) {
             $columns[] = $dt->format("Y-m");
         }
-        return view('ERP.logTotalRo', [
+        return redirect()->route( 'erp.logTotalRo' )->with([
             'ro_total' => $ro_total_obj,
-            'start' => $input['start'],
-            'end' => $input['end'],
             'columns' => $columns,
-        ]);
+        ])->withInput();
     }
 
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse

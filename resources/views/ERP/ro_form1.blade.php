@@ -5,49 +5,51 @@
         <form action="/test0/ro1" method="post">
             {{ csrf_field() }}
             <label for="start">
-                <input id="start" name="start" type="date" value="{{ $start }}" required
+                <input id="start" name="start" type="date" value="{{ old('start') }}" required
                        onchange="document.getElementById('export_start').value = this.value;">
             </label>
             <label for="end">
-                <input id="end" name="end" type="date" value="{{ $end }}" required
+                <input id="end" name="end" type="date" value="{{ old('end') }}" required
                        onchange="document.getElementById('export_end').value = this.value;">
             </label>
             <label for="status">
                 <select id="status" name="status"
                         onchange="document.getElementById('export_status').value = this.value;">
-                    <option value="ALL" @if ($status == "ALL") {{ 'selected' }} @endif>ALL</option>
-                    <option value="RECEIVED" @if ($status == "RECEIVED") {{ 'selected' }} @endif>RECEIVED</option>
-                    <option value="CLOSED" @if ($status == "CLOSED") {{ 'selected' }} @endif>CLOSED</option>
+                    <option value="ALL" @if (old('status') == "ALL") {{ 'selected' }} @endif>ALL</option>
+                    <option value="RECEIVED" @if (old('status') == "RECEIVED") {{ 'selected' }} @endif>RECEIVED</option>
+                    <option value="CLOSED" @if (old('status') == "CLOSED") {{ 'selected' }} @endif>CLOSED</option>
                 </select>
             </label>
             <label for="vendor">
-                <input id="vendor" name="vendor" type="text" value="{{ $vendor }}"
+                <input id="vendor" name="vendor" type="text" value="{{ old('vendor') }}"
                        placeholder="供應商"
                        onchange="document.getElementById('export_vendor').value = this.value;">
             </label>
             <label for="partNumber">
-                <input id="partNumber" name="partNumber" type="text" value="{{ $partNumber }}"
+                <input id="partNumber" name="partNumber" type="text" value="{{ old('partNumber') }}"
                        placeholder="工具號"
                        onchange="document.getElementById('export_partNumber').value = this.value;">
             </label>
             <button type="submit">預覽</button>
-            <a href=""
-               onclick="event.preventDefault(); document.getElementById('export-form').submit();">
-                {{ __('匯出') }}
-            </a>
+            @if (count(session()->get('list')??[]) > 0)
+                <a href=""
+                   onclick="event.preventDefault(); document.getElementById('export-form').submit();">
+                    {{ __('匯出') }}
+                </a>
+            @endif
         </form>
         <form id="export-form" action="/test0/ro1export" method="POST" style="display: none;">
             @csrf
-            <input type="hidden" id="export_start" name="start" value={{ $start }}>
-            <input type="hidden" id="export_end" name="end" value={{ $end }}>
-            <input type="hidden" id="export_status" name="status" value={{ $status }}>
-            <input type="hidden" id="export_vendor" name="vendor" value={{ $vendor }}>
-            <input type="hidden" id="export_partNumber" name="partNumber" value={{ $partNumber }}>
+            <input type="hidden" id="export_start" name="start" value={{ old('start') }}>
+            <input type="hidden" id="export_end" name="end" value={{ old('end') }}>
+            <input type="hidden" id="export_status" name="status" value={{ old('status') }}>
+            <input type="hidden" id="export_vendor" name="vendor" value={{ old('vendor') }}>
+            <input type="hidden" id="export_partNumber" name="partNumber" value={{ old('partNumber') }}>
         </form>
     </div>
     <div style="margin: 20px">
-        @if (count($list) > 0)
-            <div>共{{ count($list) }}筆</div>
+        @if (count(session()->get('list')??[]) > 0)
+            <div>共{{ count(session()->get('list')??[]) }}筆</div>
             <table style="width: 100%;" border='1'>
                 <thead>
                 <tr>
@@ -88,7 +90,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($list as $key => $value)
+                @foreach(session()->get('list')??[] as $key => $value)
                     <tr>
                         <td>{{ $value['status'] }}</td>
                         <td>{{ $value['receivedDate'] }}</td>

@@ -12,37 +12,27 @@ class Wo1Controller extends Controller
 {
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        $input = \request()->all();
-        $all_list = $this->queryToArray($input);
+        $all_list = $this->queryToArray();
         return Excel::download(new Wo1Export($all_list), '工單調度.xlsx');
-    }
-
-    public function index()
-    {
-        return view('ERP.wo_form1', [
-            'list' => [],
-            'start' => '',
-            'end' => '',
-        ]);
     }
 
     public function search()
     {
         $input = \request()->all();
-        $all_list = $this->queryToArray();
-        return view('ERP.wo_form1', [
-            'list' => $all_list,
-            'start' => $input['start'],
-            'end' => $input['end'],
-        ]);
-
+        if (count($input) > 0) {
+            $all_list = $this->queryToArray();
+            return redirect()->route( 'erp.wo1' )->with([
+                'list' => $all_list,
+            ])->withInput();
+        }
+        return view('ERP.wo_form1');
     }
 
     public function queryToArray(): array
     {
         $input = \request()->all();
-        $start = $input['start'];
-        $end = $input['end'];
+        $start = $input['start'] ?? '';
+        $end = $input['end'] ?? '';
         $pdo = DB::connection('2BizBox')->getPdo();
         $all_list = [];
         $po_str =

@@ -12,35 +12,20 @@ class Ro1Controller extends Controller
 {
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        $input = \request()->all();
-        $all_list = $this->queryToArray($input);
+        $all_list = $this->queryToArray();
         return Excel::download(new Ro1Export($all_list), '收料單+發票.xlsx');
-    }
-
-    public function index()
-    {
-        return view('ERP.ro_form1', [
-            'list' => [],
-            'start' => '',
-            'end' => '',
-            'status' => 'RECEIVED',
-            'vendor' => '',
-            'partNumber' => '',
-        ]);
     }
 
     public function search()
     {
         $input = \request()->all();
-        $all_list = $this->queryToArray();
-        return view('ERP.ro_form1', [
-            'list' => $all_list,
-            'start' => $input['start'],
-            'end' => $input['end'],
-            'status' => $input['status'],
-            'vendor' => $input['vendor'],
-            'partNumber' => $input['partNumber'],
-        ]);
+        if (count($input) > 0) {
+            $all_list = $this->queryToArray();
+            return redirect()->route( 'erp.ro1' )->with([
+                'list' => $all_list,
+            ])->withInput();
+        }
+        return view('ERP.ro_form1');
 
     }
 
