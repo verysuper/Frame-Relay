@@ -69,17 +69,22 @@ class LogTotalRoController extends Controller
                 $pdo_erp->query($ro_sql_str);
             }
             $ro_sql_str =
-                "SELECT * FROM por ORDER BY rn DESC LIMIT 1";
-            $por_last_item = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_CLASS)[0] ?? null;
+                "SELECT ".
+                "po,rn,".
+                "DATE_FORMAT(LDATE,'%Y-%m-%d %H:%i') AS LDATE " .
+                "FROM por ".
+                "ORDER BY date_received DESC LIMIT 1";
+            $por_last = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_CLASS)[0] ?? null;
             $ro_sql_str =
-                "SELECT * ".
+                "SELECT ".
+                "DATE_FORMAT(LDATE,'%Y-%m-%d %H:%i') AS LDATE " .
                 "FROM erp_log_ro_inventory ".
                 "WHERE ".
-                "order1 = '{$por_last_item->po}' and ".
-                "order2 = '{$por_last_item->rn}' ".
-                "ORDER BY LDATE LIMIT 1;";
-            $ro_item = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_CLASS)[0] ?? null;
-            if (!is_null($ro_item) && $por_last_item->LDATE == $ro_item->LDATE) {
+                "order1 = '{$por_last->po}' and ".
+                "order2 = '{$por_last->rn}' ".
+                "ORDER BY ii DESC LIMIT 1;";
+            $ro_last = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_CLASS)[0] ?? null;
+            if (!is_null($ro_last) && $por_last->LDATE == $ro_last->LDATE) {
                 return;
             }
             $pdo_erp->query("truncate erp_log_ro_inventory;");
