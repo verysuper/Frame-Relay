@@ -56,34 +56,30 @@ class LogTotalRoController extends Controller
     {
         $pdo_erp = DB::connection('2BizBox')->getPdo();
         try {
-            // todo copy temp table
             $ro_sql_str =
-                "CREATE TABLE IF NOT EXISTS `erp_log_ro_inventory` ( " .
-                "`ii` bigint(191) NOT NULL, " .
-                "`pn` varchar(191) default NULL, " .
-                "`pa` varchar(191) default NULL, " .
-                "`LUSER` varchar(191) default NULL, " .
-                "`LDATE` datetime default NULL, " .
-                "`in_qty` float(191,4) default NULL, " .
-                "`out_qty` float(191,4) default NULL, " .
-                "`ref_doc1` varchar(191) default NULL, " .
-                "`ref_doc2` varchar(191) default NULL, " .
-                "`type1` varchar(191) default NULL, " .
-                "`type2` varchar(191) default NULL, " .
-                "`type0` varchar(191) default NULL, " .
-                "`order1` varchar(191) default NULL, " .
-                "`order2` varchar(191) default NULL, " .
-                "`item1` varchar(191) default NULL, " .
-                "`item2` varchar(191) default NULL " .
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8; ";
-            $pdo_erp->query($ro_sql_str);
-            $yesterday = date('Y-m-d', strtotime("-1 days"));
+                "SELECT COUNT(*) as count " .
+                "FROM information_schema.tables  " .
+                "WHERE table_schema = DATABASE() " .
+                "AND table_name = 'erp_log_ro_inventory'; ";
+            $checkTable = $pdo_erp->query($ro_sql_str)->fetch(\PDO::FETCH_ASSOC);
+            if (!$checkTable['count'] > 0) {
+                $ro_sql_str =
+                    "CREATE TABLE erp_log_ro_inventory ".
+                    "LIKE erp_log_ro_inventory_temp;";
+                $pdo_erp->query($ro_sql_str);
+            }
             $ro_sql_str =
-                "SELECT DATE_FORMAT(LDATE,'%Y-%m-%d') AS yesterday " .
-                "FROM `erp_log_ro_inventory` " .
-                "ORDER BY LDATE DESC LIMIT 1 ";
-            $last_date = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_CLASS)[0] ?? null;
-            if (isset($last_date) && $last_date->yesterday === $yesterday) {
+                "SELECT * FROM por ORDER BY rn DESC LIMIT 1";
+            $por_last_item = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_CLASS)[0] ?? null;
+            $ro_sql_str =
+                "SELECT * ".
+                "FROM erp_log_ro_inventory ".
+                "WHERE ".
+                "order1 = '{$por_last_item->po}' and ".
+                "order2 = '{$por_last_item->rn}' ".
+                "ORDER BY LDATE LIMIT 1;";
+            $ro_item = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_CLASS)[0] ?? null;
+            if (!is_null($ro_item) && $por_last_item->LDATE == $ro_item->LDATE) {
                 return;
             }
             $pdo_erp->query("truncate erp_log_ro_inventory;");
@@ -91,8 +87,7 @@ class LogTotalRoController extends Controller
                 "SELECT " .
                 "ii,pn,pa,LUSER,LDATE,in_qty,out_qty,ref_doc1,ref_doc2 " .
                 "FROM " .
-                "log_inventory " .
-                "WHERE LDATE BETWEEN '1970-01-01 00:00:00' AND '{$yesterday} 23:59:59'";
+                "log_inventory ";
             $log_list = $pdo_erp->query($ro_sql_str)->fetchAll(\PDO::FETCH_ASSOC) ?? [];
             $log_sql_arr = null;
             foreach ($log_list as $k => $v) {
