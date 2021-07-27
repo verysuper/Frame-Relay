@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use App\Excel\Exports\ERP\LogTotalRoExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
 
 class LogTotalRoController extends Controller
 {
@@ -146,9 +147,9 @@ class LogTotalRoController extends Controller
     /**
      * @throws Exception
      */
-    public function search()
+    public function search(Request $request)
     {
-        $input = \request()->all();
+        $input = $request->except('XDEBUG_SESSION_START');
         if (!count($input) > 0) {
             return view('ERP.logTotalRo');
         }

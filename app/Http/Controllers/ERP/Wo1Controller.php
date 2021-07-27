@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ERP;
 
 use App\Http\Controllers\Controller;
 use App\Excel\Exports\ERP\Wo1Export;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -16,9 +17,9 @@ class Wo1Controller extends Controller
         return Excel::download(new Wo1Export($all_list), '工單調度.xlsx');
     }
 
-    public function search()
+    public function search(Request $request)
     {
-        $input = \request()->all();
+        $input = $request->except('XDEBUG_SESSION_START');
         if (count($input) > 0) {
             $all_list = $this->queryToArray();
             return redirect()->route( 'erp.wo1' )->with([

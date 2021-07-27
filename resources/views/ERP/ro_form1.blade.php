@@ -1,6 +1,6 @@
 @extends('ERP.test0')
 @section('content')
-    <div style="margin: 20px">
+    <div style="margin: 0 20px">
         <div>收料單+發票</div>
         <form action="/test0/ro1" method="post">
             {{ csrf_field() }}
@@ -31,12 +31,10 @@
                        onchange="document.getElementById('export_partNumber').value = this.value;">
             </label>
             <button type="submit">預覽</button>
-            @if (count(session()->get('list')??[]) > 0)
-                <a href=""
-                   onclick="event.preventDefault(); document.getElementById('export-form').submit();">
-                    {{ __('匯出') }}
-                </a>
-            @endif
+            <a href=""
+               onclick="event.preventDefault(); document.getElementById('export-form').submit();">
+                {{ __('匯出') }}
+            </a>
         </form>
         <form id="export-form" action="/test0/ro1export" method="POST" style="display: none;">
             @csrf
@@ -47,7 +45,7 @@
             <input type="hidden" id="export_partNumber" name="partNumber" value={{ old('partNumber') }}>
         </form>
     </div>
-    <div style="margin: 20px">
+    <div style="margin: 0 20px">
         @if (count(session()->get('list')??[]) > 0)
             <div>共{{ count(session()->get('list')??[]) }}筆</div>
             <table style="width: 100%;" border='1'>
