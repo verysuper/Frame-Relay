@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeExport;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class LogTotalRoExport implements FromCollection, WithHeadings, WithEvents
+class LogPoRcvExport implements FromCollection, WithHeadings, WithEvents
 {
     private $list;
 
