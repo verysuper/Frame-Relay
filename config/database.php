@@ -80,6 +80,23 @@ return [
             ]) : [],
         ],
 
+        '2BizBox_turn' => [
+            'driver' => env('DB_CONNECTION_ERP'),
+            'host' => env('DB_HOST_ERP'),
+            'port' => env('DB_PORT_ERP'),
+            'database' => env('DB_DATABASE_ERP_TEST'), // change here
+            'username' => env('DB_USERNAME_ERP'),
+            'password' => env('DB_PASSWORD_ERP'),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),

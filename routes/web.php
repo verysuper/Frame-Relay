@@ -21,3 +21,6 @@ Route::group(['as' => 'erp.', 'prefix' => 'test0', 'namespace' => 'App\Http\Cont
     Route::any('wo1', 'Wo1Controller@search')->name('wo1'); //工單調度報表
     Route::post('wo1export', 'Wo1Controller@export');
 });
+Route::group(['as' => 'erp.', 'prefix' => 'test1', 'namespace' => 'App\Http\Controllers\ERP'], function () {
+    Route::any('upPtCost', 'TurnDataController@upPtCost')->name('upPtCost'); // 最新收料成本to零件表
+});
