@@ -12,8 +12,10 @@ Auth::routes(['verify' => true]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::group(['as' => 'erp.', 'prefix' => 'test0', 'namespace' => 'App\Http\Controllers\ERP'], function () {
-    Route::any('logPoRcv', 'LogPoRcvController@search')->name('logPoRcv'); //採購單→收料單(NTD) 可能需權限
+    Route::any('logPoRcv', 'LogPoRcvController@search')->name('logPoRcv'); //採購單→收料(NTD) 可能需權限
     Route::post('logPoRcvExport', 'LogPoRcvController@export');
+    Route::any('logWoRcv', 'LogWoRcvController@search')->name('logWoRcv'); //工單→收貨(NTD) 可能需權限
+    Route::post('logWoRcvExport', 'LogWoRcvController@export');
     Route::any('po1', 'Po1Controller@search')->name('po1'); //採購單
     Route::post('po1export', 'Po1Controller@export');
     Route::any('ro1', 'Ro1Controller@search')->name('ro1'); //收料單

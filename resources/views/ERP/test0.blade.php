@@ -33,7 +33,8 @@
             </ul>
             <hr>
             <ul>
-                <li><a href="/test0/logPoRcv">採購單→收料單(NTD)</a></li>
+                <li><a href="/test0/logPoRcv">採購單→收料(NTD)</a></li>
+{{--                <li><a href="/test0/logWoRcv">工單→收貨(NTD)</a></li>--}}
             </ul>
             <hr>
         </nav>

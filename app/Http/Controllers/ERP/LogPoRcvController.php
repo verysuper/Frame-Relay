@@ -11,11 +11,12 @@ use App\Excel\Exports\ERP\LogPoRcvExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Helper\Tools\Common;
-use App\Helper\ERP\LogPoRcv;
+use App\Helper\ERP\TurnData;
 
 class LogPoRcvController extends Controller
 {
-    use Common, LogPoRcv;
+    use Common, TurnData;
+
     /**
      * @throws Exception
      */
@@ -25,31 +26,18 @@ class LogPoRcvController extends Controller
         if (!count($input) > 0) {
             return view('ERP.logPoRcv');
         }
-        $this->turn_po_log();
-        $pdo_erp = DB::connection('2BizBox')->getPdo();
+        $this->turn_log_inventory();
         $ipArr = explode(".", $this->getIp());
         $tableName = "erp_log_po_detail_{$ipArr[2]}_{$ipArr[3]}";
-        $po_sql_str =
-            "SELECT COUNT(*) as count " .
-            "FROM information_schema.tables  " .
-            "WHERE table_schema = DATABASE() " .
-            "AND table_name = '{$tableName}'; ";
-        $checkTable = $pdo_erp->query($po_sql_str)->fetch(\PDO::FETCH_ASSOC);
-        if (!$checkTable['count'] > 0) {
-            $po_sql_str =
-                "CREATE TABLE {$tableName} LIKE erp_log_po_detail_temp;";
-            $pdo_erp->query($po_sql_str);
-        } else {
-            $pdo_erp->query("truncate {$tableName};");
-        }
+        $this->check_table($tableName, 'po');
         $po_sql_str =
             "SELECT " .
-            "erp_log_po_inventory.pn, " .
-            "erp_log_po_inventory.pa, " .
-            "erp_log_po_inventory.in_qty, " .
-            "erp_log_po_inventory.out_qty, " .
-            "erp_log_po_inventory.ref_doc1, " .
-            "erp_log_po_inventory.ref_doc2, " .
+            "erp_log_inventory.pn, " .
+            "erp_log_inventory.pa, " .
+            "erp_log_inventory.in_qty, " .
+            "erp_log_inventory.out_qty, " .
+            "erp_log_inventory.ref_doc1, " .
+            "erp_log_inventory.ref_doc2, " .
             "poi.cost AS costPerUnit, " .
             "por.currency, " .
             "por.exchange AS exchangeRate, " .
@@ -62,18 +50,21 @@ class LogPoRcvController extends Controller
             "poi.`status` AS poiStatus, " .
             "poi.qty AS demandQty, " .
             "poi.rcv AS receivedQty, " .
-            "erp_log_po_inventory.LDATE AS rcvDate, " .
-            "erp_log_po_inventory.LUSER AS user, " .
-            "DATE_FORMAT(erp_log_po_inventory.LDATE,'%Y-%m') AS rcvMonth, " .
+            "erp_log_inventory.LDATE AS rcvDate, " .
+            "erp_log_inventory.LUSER AS user, " .
+            "DATE_FORMAT(erp_log_inventory.LDATE,'%Y-%m') AS rcvMonth, " .
             "poi.description AS description " .
             "FROM " .
-            "erp_log_po_inventory " .
-            "LEFT JOIN poi ON poi.po = erp_log_po_inventory.order1 AND poi.pi = erp_log_po_inventory.item1 " .
-            "LEFT JOIN por ON por.po = erp_log_po_inventory.order1 AND por.rn = erp_log_po_inventory.order2 " .
+            "erp_log_inventory " .
+            "LEFT JOIN poi ON poi.po = erp_log_inventory.order1 AND poi.pi = erp_log_inventory.item1 " .
+            "LEFT JOIN por ON por.po = erp_log_inventory.order1 AND por.rn = erp_log_inventory.order2 " .
             "LEFT JOIN ab ON ab.id = por.id " .
             "WHERE " .
-            "erp_log_po_inventory.LDATE BETWEEN '{$input['start']} 00:00:00' AND '{$input['end']} 23:59:59' " .
-            "ORDER BY erp_log_po_inventory.LDATE DESC ";
+            "1 = 1 " .
+            "AND type0 = 'P->R' " .
+            "AND erp_log_inventory.LDATE BETWEEN '{$input['start']} 00:00:00' AND '{$input['end']} 23:59:59' " .
+            "ORDER BY erp_log_inventory.LDATE DESC ";
+        $pdo_erp = DB::connection('2BizBox_turn')->getPdo();
         $po_list = $pdo_erp->query($po_sql_str)->fetchAll(\PDO::FETCH_ASSOC) ?? [];
         if (!count($po_list) > 0) {
             return redirect()->route('erp.logPoRcv')->with([
@@ -133,12 +124,12 @@ class LogPoRcvController extends Controller
 
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        $pdo_erp = DB::connection('2BizBox')->getPdo();
+        $pdo_erp = DB::connection('2BizBox_turn')->getPdo();
         $ipArr = explode(".", $this->getIp());
         $tableName = "erp_log_po_detail_{$ipArr[2]}_{$ipArr[3]}";
         $po_sql_str =
             "SELECT * FROM {$tableName}";
         $all_list = $pdo_erp->query($po_sql_str)->fetchAll(\PDO::FETCH_ASSOC) ?? [];
-        return Excel::download(new LogPoRcvExport($all_list), '採購單→收料單(NTD).xlsx');
+        return Excel::download(new LogPoRcvExport($all_list), '採購單→收料(NTD).xlsx');
     }
 }

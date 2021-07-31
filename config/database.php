@@ -84,7 +84,7 @@ return [
             'driver' => env('DB_CONNECTION_ERP'),
             'host' => env('DB_HOST_ERP'),
             'port' => env('DB_PORT_ERP'),
-            'database' => env('DB_DATABASE_ERP_TEST'), // change here
+            'database' => env('DB_DATABASE_ERP_TURN'),
             'username' => env('DB_USERNAME_ERP'),
             'password' => env('DB_PASSWORD_ERP'),
             'unix_socket' => env('DB_SOCKET', ''),
