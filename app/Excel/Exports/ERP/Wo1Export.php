@@ -4,14 +4,17 @@ namespace App\Excel\Exports\ERP;
 
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\BeforeExport;
-use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Events\BeforeWriting;
+use Maatwebsite\Excel\Excel;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
+use Maatwebsite\Excel\Files\LocalTemporaryFile;
 
-class Wo1Export implements FromCollection, WithHeadings, WithEvents
+class Wo1Export implements FromCollection, WithEvents, ShouldAutoSize, WithCustomStartCell
 {
     private $list;
+    private $calledByEvent = false;
 
     public function __construct($list)
     {
@@ -43,45 +46,32 @@ class Wo1Export implements FromCollection, WithHeadings, WithEvents
                 '首選供應商' => $v['preferredPo'],
                 '採購單' => $v['採購單'],
                 '採購單項' => $v['採購單項'],
-//                'flag' => $v['lv'],
+                'flag' => $v['lv'],
             ];
         }
-        return new Collection($arr);
-    }
+        if ($this->calledByEvent) { // flag
+            return new Collection($arr);
+        }
 
-    public function headings(): array
-    {
-        return [
-            '工單',
-            '工單項',
-            'pNum',
-            'pType',
-            'pDes',
-            '數量',
-            '已發',
-            '已收',
-            '庫存',
-            '在途數',
-            '調整數',
-            '短缺預測',
-            '供應商',
-            '需求日',
-            '起始日',
-            'status',
-            'makeBuy',
-            '首選供應商',
-            '採購單',
-            '採購單項',
-//            'flag',
-        ];
+        return new Collection([]);
     }
 
     public function registerEvents(): array
     {
         return [
-            AfterSheet::class => function (AfterSheet $event) {
-                // todo set styles
+            BeforeWriting::class => function(BeforeWriting $event) {
+                $templateFile = new LocalTemporaryFile(storage_path('excel_template\工單調度.xlsx'));
+                $event->writer->reopen($templateFile, Excel::XLSX);
+                $event->writer->getSheetByIndex(0);
+                $this->calledByEvent = true; // set the flag
+                $event->writer->getSheetByIndex(0)->export($event->getConcernable()); // call the export on the first sheet
+                return $event->getWriter()->getSheetByIndex(0);
             },
         ];
+    }
+
+    public function startCell(): string
+    {
+        return 'A2';
     }
 }
